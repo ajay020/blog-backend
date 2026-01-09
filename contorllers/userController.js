@@ -24,7 +24,7 @@ const googleAuth = async (req, res) => {
     res.json({ ...user._doc, token: googleTokenId });
 }
 
-export const login = async (req, res) => {
+const login = async (req, res) => {
     try {
         const { email, password } = req.body;
 
@@ -61,7 +61,7 @@ export const login = async (req, res) => {
         res.status(200).json({
             success: true,
             data: {
-                id: user._id,
+                _id: user._id,
                 name: user.name,
                 email: user.email,
                 bookmarkedPosts: user.bookmarkedPosts,
@@ -79,7 +79,7 @@ export const login = async (req, res) => {
 };
 
 
-export const register = async (req, res) => {
+const register = async (req, res) => {
     try {
         const { name, email, password } = req.body;
 
