@@ -1,7 +1,4 @@
-const path = require('path');
-const fs = require('fs');
 const Post = require('../models/postModel');
-const upload = require('../middleware/uploadMiddleware');
 
 // Get all posts with pagination
 const getPosts = async (req, res) => {
@@ -58,17 +55,26 @@ const getPostById = async (req, res) => {
 
 const createPost = async (req, res) => {
     try {
-        const { title, content, image } = req.body;
+        const { title, content } = req.body;
 
         if (!title) {
             return res.status(400).json({ message: "Title is required" });
         }
 
+        let image = null;
+
+        if (req.file) {
+            image = {
+                url: req.file.path,        
+                publicId: req.file.filename,
+            };
+        }
+
         const post = await Post.create({
-            author: req.user.id,
             title,
             content,
-            image, // { url, publicId }
+            author: req.user._id,
+            image,
         });
 
         res.status(201).json(post);
@@ -91,15 +97,25 @@ const updatePost = async (req, res) => {
             return res.status(403).json({ message: "Not authorized" });
         }
 
-        const { title, content, image } = req.body;
+        // If new image uploaded → delete old one
+        if (req.file && post.image?.publicId) {
+            await cloudinary.uploader.destroy(post.image.publicId);
+        }
 
-        if (title !== undefined) post.title = title;
-        if (content !== undefined) post.content = content;
-        if (image !== undefined) post.image = image;
+        const updatedImage = req.file
+            ? {
+                url: req.file.path,
+                publicId: req.file.filename,
+            }
+            : post.image;
 
-        const updatedPost = await post.save();
+        post.title = req.body.title ?? post.title;
+        post.content = req.body.content ?? post.content;
+        post.image = updatedImage;
 
-        res.status(200).json(updatedPost);
+        await post.save();
+
+        res.json(post);
     } catch (error) {
         console.error("Update Post Error:", error);
         res.status(500).json({ message: "Server error" });
@@ -119,12 +135,16 @@ const deletePost = async (req, res) => {
             return res.status(403).json({ message: "Not authorized" });
         }
 
+        if (post.image?.publicId) {
+            await cloudinary.uploader.destroy(post.image.publicId);
+        }
+
         await post.deleteOne();
 
         res.status(200).json({ message: "Post deleted successfully" });
     } catch (error) {
         console.error("Delete Post Error:", error);
-        res.status(500).json({ message: "Server error" });
+        res.status(500).json({ message: "Failed to delete post" });
     }
 };
 
