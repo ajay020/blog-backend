@@ -1,5 +1,5 @@
 const Post = require('../models/postModel');
-
+const cloudinary = require('../config/cloudinary')
 // Get all posts with pagination
 const getPosts = async (req, res) => {
     try {
@@ -65,7 +65,7 @@ const createPost = async (req, res) => {
 
         if (req.file) {
             image = {
-                url: req.file.path,        
+                url: req.file.path,
                 publicId: req.file.filename,
             };
         }
@@ -125,7 +125,7 @@ const updatePost = async (req, res) => {
 
 const deletePost = async (req, res) => {
     try {
-        const post = await Post.findById(req.params.id);
+        const post = await Post.findById(req.params.postId);
 
         if (!post) {
             return res.status(404).json({ message: "Post not found" });
