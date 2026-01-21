@@ -1,25 +1,25 @@
 const express = require('express');
-const router = express.Router();
 const {
-    login,
-    register,
-    getMe,
-    googleAuth,
-    bookmarkPost,
-    getBookMarkPosts
-} = require('../contorllers/userController');
-const protect = require('../middleware/authMiddleware');
+    followUser,
+    unfollowUser,
+    getFollowers,
+    getFollowing,
+    isFollowing,
+    getUserById,
+} = require('../controllers/followController');
 
-router.post("/login", login);
+const { protect } = require('../middleware/auth');
 
-router.post("/register", register);
+const router = express.Router();
 
-router.post("/auth/google", googleAuth);
+// Public routes
+router.get('/:userId', getUserById);
+router.get('/:userId/followers', getFollowers);
+router.get('/:userId/following', getFollowing);
 
-router.post("/bookmark-post", protect, bookmarkPost);
-
-router.get("/bookmark-posts", protect, getBookMarkPosts);
-
-router.post("/me", protect, getMe);
+// Protected routes
+router.put('/:userId/follow', protect, followUser);
+router.put('/:userId/unfollow', protect, unfollowUser);
+router.get('/:userId/is-following', protect, isFollowing);
 
 module.exports = router;

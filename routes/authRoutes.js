@@ -7,7 +7,7 @@ const {
     updatePassword,
     logout,
     deleteAccount
-} = require('../contorllers/authController');
+} = require('../controllers/authController');
 const { protect } = require('../middleware/auth');
 
 const router = express.Router();

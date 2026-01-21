@@ -9,7 +9,7 @@ const {
     getMyArticles,
     getArticleById,
     getFeaturedArticles,
-} = require('../contorllers/articleController');
+} = require('../controllers/articleController');
 
 // Assuming you have auth middleware
 const { protect } = require('../middleware/auth');

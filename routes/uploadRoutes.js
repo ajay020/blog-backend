@@ -5,7 +5,7 @@ const {
     uploadImages,
     deleteImage,
     uploadBase64,
-} = require('../contorllers/uploadController');
+} = require('../controllers/uploadController');
 const { upload } = require('../config/cloudinary');
 const { protect } = require('../middleware/auth');
 

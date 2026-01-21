@@ -88,7 +88,7 @@ exports.createArticle = async (req, res) => {
 // @access  Public
 exports.getArticles = async (req, res) => {
     try {
-        const { page = 1, limit = 10, tag, category, search } = req.query;
+        const { page = 1, limit = 10, tag, category, search, author } = req.query;
 
         const query = { status: 'published' };
 
@@ -105,6 +105,10 @@ exports.getArticles = async (req, res) => {
         // Search by title
         if (search) {
             query.title = { $regex: search, $options: 'i' };
+        }
+
+        if(author) {
+            query.author = author
         }
 
         const articles = await Article.find(query)
