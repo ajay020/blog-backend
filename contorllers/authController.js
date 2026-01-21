@@ -1,5 +1,5 @@
-// controllers/authController.js
 const User = require('../models/User');
+const { cloudinary } = require('../config/cloudinary');
 
 // @desc    Register user
 // @route   POST /api/auth/register
@@ -184,6 +184,101 @@ exports.logout = async (req, res) => {
         data: {},
         message: 'Logged out successfully',
     });
+};
+
+// @desc    Delete user account
+// @route   DELETE /api/auth/account
+// @access  Private
+exports.deleteAccount = async (req, res) => {
+    try {
+        const userId = req.user._id;
+
+        // Find user
+        const user = await User.findById(userId);
+
+        if (!user) {
+            return res.status(404).json({
+                success: false,
+                error: 'User not found',
+            });
+        }
+
+        // Delete user's avatar from Cloudinary if exists
+        if (user.avatar && user.avatar.includes('cloudinary')) {
+            const publicId = extractPublicId(user.avatar);
+            if (publicId) {
+                await cloudinary.uploader.destroy(publicId).catch((err) => {
+                    console.error('Failed to delete avatar:', err);
+                });
+            }
+        }
+
+        // Find all user's articles
+        const Article = require('../models/Article');
+        const userArticles = await Article.find({ author: userId });
+
+        // Delete all images from user's articles
+        for (const article of userArticles) {
+            // Delete cover image
+            if (article.coverImage && article.coverImage.includes('cloudinary')) {
+                const publicId = extractPublicId(article.coverImage);
+                if (publicId) {
+                    await cloudinary.uploader.destroy(publicId).catch((err) => {
+                        console.error('Failed to delete cover image:', err);
+                    });
+                }
+            }
+
+            // Delete content images
+            if (article.content && article.content.blocks) {
+                const imageBlocks = article.content.blocks.filter(
+                    (block) => block.type === 'image' && block.data && block.data.file
+                );
+
+                for (const block of imageBlocks) {
+                    if (block.data.file.url && block.data.file.url.includes('cloudinary')) {
+                        const publicId = extractPublicId(block.data.file.url);
+                        if (publicId) {
+                            await cloudinary.uploader.destroy(publicId).catch((err) => {
+                                console.error('Failed to delete content image:', err);
+                            });
+                        }
+                    }
+                }
+            }
+        }
+
+        // Delete all user's articles
+        await Article.deleteMany({ author: userId });
+
+        // Delete user
+        await user.deleteOne();
+
+        res.json({
+            success: true,
+            message: 'Account deleted successfully',
+        });
+    } catch (error) {
+        console.error('Delete account error:', error);
+        res.status(500).json({
+            success: false,
+            error: error.message,
+        });
+    }
+};
+
+// Helper function to extract public_id from Cloudinary URL
+const extractPublicId = (url) => {
+    if (!url) return null;
+
+    try {
+        // Example URL: https://res.cloudinary.com/demo/image/upload/v1234567890/blog/covers/abc123.jpg
+        const matches = url.match(/\/v\d+\/(.+)\.[a-z]+$/);
+        return matches ? matches[1] : null;
+    } catch (error) {
+        console.error('Error extracting public_id:', error);
+        return null;
+    }
 };
 
 // Helper function to get token from model, create cookie and send response

@@ -1,4 +1,3 @@
-// routes/authRoutes.js
 const express = require('express');
 const {
     register,
@@ -7,8 +6,8 @@ const {
     updateDetails,
     updatePassword,
     logout,
+    deleteAccount
 } = require('../contorllers/authController');
-
 const { protect } = require('../middleware/auth');
 
 const router = express.Router();
@@ -22,5 +21,6 @@ router.get('/me', protect, getMe);
 router.put('/updatedetails', protect, updateDetails);
 router.put('/updatepassword', protect, updatePassword);
 router.get('/logout', protect, logout);
+router.delete('/account', protect, deleteAccount);
 
 module.exports = router;
