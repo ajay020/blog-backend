@@ -15,7 +15,7 @@ const storage = new CloudinaryStorage({
     cloudinary: cloudinary,
     params: {
         folder: 'blog', // Folder name in Cloudinary
-        allowed_formats: ['jpg', 'jpeg', 'png', 'gif', 'webp'],
+        allowed_formats: ['jpg', 'jpeg', 'png', 'gif', 'webp', 'avif'],
         transformation: [{ width: 1200, height: 630, crop: 'limit' }], // Optimize images
     },
 });
@@ -24,7 +24,7 @@ const storage = new CloudinaryStorage({
 const upload = multer({
     storage: storage,
     limits: {
-        fileSize: 5 * 1024 * 1024, // 5MB max file size
+        fileSize: 2 * 1024 * 1024, // 2MB max file size
     },
     fileFilter: (req, file, cb) => {
         // Check file type

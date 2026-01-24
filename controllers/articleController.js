@@ -1,3 +1,4 @@
+// controllers/articleController.js (With proper validation)
 const Article = require('../models/Article');
 const { cloudinary } = require('../config/cloudinary');
 
@@ -88,7 +89,7 @@ exports.createArticle = async (req, res) => {
 // @access  Public
 exports.getArticles = async (req, res) => {
     try {
-        const { page = 1, limit = 10, tag, category, search, author } = req.query;
+        const { page = 1, limit = 10, tag, category, search } = req.query;
 
         const query = { status: 'published' };
 
@@ -107,22 +108,23 @@ exports.getArticles = async (req, res) => {
             query.title = { $regex: search, $options: 'i' };
         }
 
-        if(author) {
-            query.author = author
-        }
-
         const articles = await Article.find(query)
             .populate('author', 'name email avatar')
             .sort({ publishedAt: -1 })
             .limit(limit * 1)
-            .skip((page - 1) * limit)
-            .lean();
+            .skip((page - 1) * limit);
 
         const count = await Article.countDocuments(query);
 
+        // Convert to plain objects with virtuals
+        const articlesWithVirtuals = articles.map(article => {
+            const obj = article.toObject();
+            return obj;
+        });
+
         res.json({
             success: true,
-            data: articles,
+            data: articlesWithVirtuals,
             totalPages: Math.ceil(count / limit),
             currentPage: parseInt(page),
             total: count,
@@ -141,8 +143,7 @@ exports.getArticles = async (req, res) => {
 exports.getArticle = async (req, res) => {
     try {
         const article = await Article.findOne({ slug: req.params.slug })
-            .populate('author', 'name email avatar bio')
-            .lean();
+            .populate('author', 'name email avatar bio followers following articlesCount');
 
         if (!article) {
             return res.status(404).json({
@@ -156,7 +157,7 @@ exports.getArticle = async (req, res) => {
 
         res.json({
             success: true,
-            data: article,
+            data: article.toObject(), // Converts to plain object with virtuals
         });
     } catch (error) {
         res.status(500).json({
@@ -377,12 +378,14 @@ exports.toggleLike = async (req, res) => {
 exports.getMyArticles = async (req, res) => {
     try {
         const articles = await Article.find({ author: req.user._id })
-            .sort({ createdAt: -1 })
-            .lean();
+            .sort({ createdAt: -1 });
+
+        // Convert to plain objects with virtuals
+        const articlesWithVirtuals = articles.map(article => article.toObject());
 
         res.json({
             success: true,
-            data: articles,
+            data: articlesWithVirtuals,
         });
     } catch (error) {
         res.status(500).json({
@@ -403,12 +406,14 @@ exports.getFeaturedArticles = async (req, res) => {
         })
             .populate('author', 'name avatar')
             .sort({ publishedAt: -1 })
-            .limit(5)
-            .lean();
+            .limit(5);
+
+        // Convert to plain objects with virtuals
+        const articlesWithVirtuals = articles.map(article => article.toObject());
 
         res.json({
             success: true,
-            data: articles,
+            data: articlesWithVirtuals,
         });
     } catch (error) {
         res.status(500).json({
