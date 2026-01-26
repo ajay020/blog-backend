@@ -11,6 +11,9 @@ const {
     getFeaturedArticles,
 } = require('../controllers/articleController');
 
+// Import comment routes
+const commentRoutes = require('./commentRoutes');
+
 // Assuming you have auth middleware
 const { protect } = require('../middleware/auth');
 
@@ -21,12 +24,15 @@ router.get('/', getArticles);
 router.get('/featured', getFeaturedArticles);
 router.get('/:slug', getArticle);
 
+// Nested comment routes
+router.use('/:articleId/comments', commentRoutes);
+
 // Protected routes
 router.use(protect); // All routes after this require authentication
 
 router.post('/', createArticle);
 router.get('/me/articles', getMyArticles);
-router.get('/id/:id', getArticleById);
+router.get('/id/:id', getArticleById); //  Get article by ID for editing
 router.put('/:id', updateArticle);
 router.delete('/:id', deleteArticle);
 router.put('/:id/like', toggleLike);
