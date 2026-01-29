@@ -11,6 +11,11 @@ const {
     getFeaturedArticles,
 } = require('../controllers/articleController');
 
+const {
+    toggleBookmark,
+    isBookmarked,
+} = require('../controllers/bookmarkController');
+
 // Import comment routes
 const commentRoutes = require('./commentRoutes');
 
@@ -36,5 +41,9 @@ router.get('/id/:id', getArticleById); //  Get article by ID for editing
 router.put('/:id', updateArticle);
 router.delete('/:id', deleteArticle);
 router.put('/:id/like', toggleLike);
+
+// Bookmark routes
+router.put('/:articleId/bookmark', toggleBookmark);
+router.get('/:articleId/is-bookmarked', isBookmarked);
 
 module.exports = router;
