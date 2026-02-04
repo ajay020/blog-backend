@@ -382,11 +382,13 @@ exports.getMyArticles = async (req, res) => {
 
         // Convert to plain objects with virtuals
         const articlesWithVirtuals = articles.map(article => article.toObject());
+        // console.log("ArticlesWithVirtuals:", articlesWithVirtuals);
 
         res.json({
             success: true,
             data: articlesWithVirtuals,
         });
+
     } catch (error) {
         res.status(500).json({
             success: false,
