@@ -346,6 +346,7 @@ exports.deleteArticle = async (req, res) => {
 // @access  Private
 exports.toggleLike = async (req, res) => {
     try {
+        console.log('Toggling like for article ID:', req.params.id, 'by user ID:', req.user._id);
         const article = await Article.findById(req.params.id);
 
         if (!article) {

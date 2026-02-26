@@ -70,27 +70,36 @@ commentSchema.virtual('repliesCount', {
 
 // Static method to get comments with replies
 commentSchema.statics.getCommentsWithReplies = async function (articleId) {
+    // 1. Find parent comments and convert to plain objects immediately using .lean()
+    // .lean() makes the query much faster because it returns JS objects, not Mongoose documents
     const comments = await this.find({
         article: articleId,
         parentComment: null,
         isDeleted: false,
     })
         .populate('author', 'name avatar')
-        .sort({ createdAt: -1 });
+        .sort({ createdAt: -1 })
+        .lean();
 
-    // Get replies for each comment
-    for (let comment of comments) {
+    // 2. Map through the plain objects and attach replies
+    const commentsWithReplies = await Promise.all(comments.map(async (comment) => {
         const replies = await this.find({
             parentComment: comment._id,
             isDeleted: false,
         })
             .populate('author', 'name avatar')
-            .sort({ createdAt: 1 });
+            .sort({ createdAt: 1 })
+            .lean();
 
-        comment.replies = replies.map(r => r.toObject());
-    }
+        // Now this will stay attached because 'comment' is a plain object
+        return {
+            ...comment,
+            replies: replies,
+            repliesCount: replies.length
+        };
+    }));
 
-    return comments.map(c => c.toObject());
+    return commentsWithReplies;
 };
 
 // Update article's comment count after save

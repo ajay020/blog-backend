@@ -120,7 +120,7 @@ exports.deleteComment = async (req, res) => {
     try {
         const comment = await Comment.findById(req.params.id);
         console.log("DELETE comment", req.params.id)
-        
+
         if (!comment) {
             return res.status(404).json({
                 success: false,

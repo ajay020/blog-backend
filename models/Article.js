@@ -117,6 +117,7 @@ articleSchema.index({ status: 1, publishedAt: -1 });
 
 // Virtual for likes count
 articleSchema.virtual('likesCount').get(function () {
+
     return this.likes ? this.likes.length : 0;
 });
 
