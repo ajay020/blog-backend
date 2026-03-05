@@ -1,0 +1,10 @@
+services:
+  web:
+    build: .
+    ports:
+      - "5000:5000"        # Map container port 5000 → host port 5000
+    volumes:
+      - .:/app             # Mount code for live changes (development)
+    environment:
+      - NODE_ENV=development
+      - MONGO_URI=${MONGO_URI}  # Cloud MongoDB connection string

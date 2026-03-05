@@ -29,9 +29,13 @@ app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 app.use(cookieParser());
 
 
+const mongoURI = process.env.MONGO_URI || 'mongodb://localhost:27017/blogdb';
 // Connect to MongoDB
 mongoose
-    .connect(process.env.MONGO_URI)
+    .connect(mongoURI, {
+        useNewUrlParser: true,
+        useUnifiedTopology: true
+    })
     .then(() => console.log('MongoDB Connected'))
     .catch((err) => console.error('MongoDB connection error:', err));
 
@@ -85,7 +89,7 @@ app.use((err, req, res, next) => {
 
 // 404 handler
 app.use((req, res) => {
-    
+
     res.status(404).json({
         success: false,
         error: 'Route not found',
