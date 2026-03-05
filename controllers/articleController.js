@@ -1,4 +1,3 @@
-// controllers/articleController.js (With proper validation)
 const Article = require('../models/Article');
 const { cloudinary } = require('../config/cloudinary');
 
