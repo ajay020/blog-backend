@@ -179,6 +179,7 @@ exports.updatePassword = async (req, res) => {
 // @route   GET /api/auth/logout
 // @access  Private
 exports.logout = async (req, res) => {
+    console.log("logout user", req.url);
     res.json({
         success: true,
         data: {},

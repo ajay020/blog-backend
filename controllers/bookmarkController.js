@@ -10,6 +10,8 @@ exports.toggleBookmark = async (req, res) => {
         const articleId = req.params.articleId;
         const userId = req.user._id;
 
+        console.log("articleid: ", articleId)
+
         // Check if article exists
         const article = await Article.findById(articleId);
         if (!article) {

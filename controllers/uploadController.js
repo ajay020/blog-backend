@@ -6,7 +6,7 @@ const { cloudinary } = require('../config/cloudinary');
 // @access  Private
 exports.uploadImage = async (req, res) => {
     try {
-        console.log("Req.File", req.file)
+        // console.log("Req.File", req.file)
 
         if (!req.file) {
             return res.status(400).json({

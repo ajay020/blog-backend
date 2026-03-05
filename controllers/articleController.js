@@ -22,6 +22,8 @@ exports.createArticle = async (req, res) => {
     try {
         const { title, content, coverImage, tags, category, status, metaDescription } = req.body;
 
+        console.log(title, content);
+
         // Validate required fields
         if (!title) {
             return res.status(400).json({
