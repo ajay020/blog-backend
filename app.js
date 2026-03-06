@@ -11,6 +11,8 @@ const userRoutes = require("./routes/userRoutes");
 const commentRoutes = require("./routes/commentRoutes");
 const bookmarkRoutes = require("./routes/bookmarkRoutes");
 
+const rateLimiter = require("./middleware/rateLimiter");
+const authLimiter = require("./middleware/authLimiter");
 const app = express();
 
 // Middleware
@@ -19,6 +21,9 @@ app.use(express.urlencoded({ extended: true, limit: "10mb" }));
 
 app.use(cookieParser());
 app.use(helmet());
+app.use("/api", rateLimiter);
+app.use('/api/auth/login', authLimiter);
+
 
 if (process.env.NODE_ENV === "development") {
     app.use(morgan("dev"));
