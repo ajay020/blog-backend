@@ -1,33 +1,20 @@
 const express = require('express');
-const {
-    createArticle,
-    getArticles,
-    getArticle,
-    updateArticle,
-    deleteArticle,
-    toggleLike,
-    getMyArticles,
-    getArticleById,
-    getFeaturedArticles,
-} = require('../controllers/articleController');
-
+const articleController = require('../controllers/articleController');
 const {
     toggleBookmark,
     isBookmarked,
 } = require('../controllers/bookmarkController');
 
-// Import comment routes
 const commentRoutes = require('./commentRoutes');
 
-// Assuming you have auth middleware
 const { protect } = require('../middleware/auth');
 
 const router = express.Router();
 
 // Public routes
-router.get('/', getArticles);
-router.get('/featured', getFeaturedArticles);
-router.get('/:slug', getArticle);
+router.get('/', articleController.getArticles);
+router.get('/featured', articleController.getFeaturedArticles);
+router.get('/:slug', articleController.getArticleBySlug);
 
 // Nested comment routes
 router.use('/:articleId/comments', commentRoutes);
@@ -35,12 +22,12 @@ router.use('/:articleId/comments', commentRoutes);
 // Protected routes
 router.use(protect); // All routes after this require authentication
 
-router.post('/', createArticle);
-router.get('/me/articles', getMyArticles);
-router.get('/id/:id', getArticleById); //  Get article by ID for editing
-router.put('/:id', updateArticle);
-router.delete('/:id', deleteArticle);
-router.put('/:id/like', toggleLike);
+router.post('/', articleController.createArticle);
+router.get('/me/articles', articleController.getMyArticles);
+router.get('/id/:id', articleController.getArticleById);
+router.put('/:id', articleController.updateArticle);
+router.delete('/:id', articleController.deleteArticle);
+router.put('/:id/like', articleController.toggleLike);
 
 // Bookmark routes
 router.put('/:articleId/bookmark', toggleBookmark);

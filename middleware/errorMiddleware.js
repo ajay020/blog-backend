@@ -1,23 +1,19 @@
 const errorMiddleware = (err, req, res, next) => {
     console.error(err.stack);
 
-    if (err.code === "LIMIT_FILE_SIZE") {
-        return res.status(400).json({
+    const statusCode = err.statusCode || 500;
+
+    if (process.env.NODE_ENV === "development") {
+        return res.status(statusCode).json({
             success: false,
-            error: "File size too large. Maximum size is 5MB",
+            message: err.message,
+            stack: err.stack
         });
     }
 
-    if (err.message === "Not an image! Please upload an image.") {
-        return res.status(400).json({
-            success: false,
-            error: err.message,
-        });
-    }
-
-    res.status(500).json({
+    return res.status(statusCode).json({
         success: false,
-        error: err.message || "Server Error",
+        error: err.message || "Internal Server Error",
     });
 };
 
