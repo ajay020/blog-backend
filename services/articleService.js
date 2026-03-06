@@ -3,6 +3,7 @@ const AppError = require("../utils/AppError");
 const Article = require('../models/Article');
 const AppError = require('../utils/AppError');
 const { cloudinary } = require('../config/cloudinary');
+const { extractPublicId } = require("../util/helper");
 
 
 // Validate Editor.js content
@@ -14,17 +15,6 @@ const validateEditorContent = (content) => {
         throw new AppError('Content must have a blocks array', 400);
     }
     return true;
-};
-
-// Extract Cloudinary public ID
-const extractPublicId = (url) => {
-    if (!url) return null;
-    try {
-        const matches = url.match(/\/v\d+\/(.+)\.[a-z]+$/);
-        return matches ? matches[1] : null;
-    } catch {
-        return null;
-    }
 };
 
 // Upload image to Cloudinary
