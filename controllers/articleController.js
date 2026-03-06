@@ -1,6 +1,7 @@
 const Article = require('../models/Article');
-const asyncHandler = require('../util/asyncHandler');
-const AppError = require('../util/AppError');
+const asyncHandler = require('../utils/asyncHandler');
+const AppError = require('../utils/AppError');
+const articleService = require("../services/articleService");
 
 // POST /api/articles
 const createArticle = asyncHandler(async (req, res) => {

@@ -1,9 +1,7 @@
 const Article = require("../models/Article");
-const AppError = require("../utils/AppError");
-const Article = require('../models/Article');
-const AppError = require('../utils/AppError');
 const { cloudinary } = require('../config/cloudinary');
-const { extractPublicId } = require("../util/helper");
+const { extractPublicId } = require("../utils/helper");
+const AppError = require("../utils/AppError");
 
 
 // Validate Editor.js content
@@ -72,7 +70,7 @@ const getArticles = async ({ page = 1, limit = 10, tag, category, search }) => {
     const articlesWithVirtuals = articles.map(a => a.toObject());
 
     return {
-        articles: articlesWithVirtuals,
+        data: articlesWithVirtuals,
         totalPages: Math.ceil(count / limit),
         currentPage: parseInt(page), total: count
     };

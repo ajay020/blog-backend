@@ -1,4 +1,4 @@
-const asyncHandler = require('../util/asyncHandler');
+const asyncHandler = require('../utils/asyncHandler');
 const authService = require('../services/authService');
 
 // Helper: send token in cookie

@@ -1,8 +1,8 @@
 const User = require('../models/User');
 const Article = require('../models/Article');
-const AppError = require('../util/AppError');
+const AppError = require('../utils/AppError');
 const { cloudinary } = require('../config/cloudinary');
-const { extractPublicId } = require('../util/helper');
+const { extractPublicId } = require('../utils/helper');
 
 // Register user
 const registerUser = async ({ name, email, password }) => {
