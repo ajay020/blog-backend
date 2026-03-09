@@ -1,4 +1,3 @@
-// routes/uploadRoutes.js
 const express = require('express');
 const {
     uploadImage,
