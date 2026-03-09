@@ -21,20 +21,21 @@ app.use(express.urlencoded({ extended: true, limit: "10mb" }));
 
 app.use(cookieParser());
 app.use(helmet());
-app.use("/api", rateLimiter);
-app.use('/api/auth/login', authLimiter);
+// app.use("/api", rateLimiter);
+// app.use('/api/auth/login', authLimiter);
 
 
 if (process.env.NODE_ENV === "development") {
     app.use(morgan("dev"));
 }
 
+console.log("CLIENT_URL->", process.env.CLIENT_URL)
+
 app.use(cors({
     origin: process.env.CLIENT_URL,
+    methods: ['GET', 'POST', 'PUT', 'DELETE'],
     credentials: true
 }));
-
-console.log("CLIENT_URL", process.env.CLIENT_URL)
 
 // Routes
 app.use("/api/articles", articleRoutes);

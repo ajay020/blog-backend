@@ -7,13 +7,15 @@ const errorMiddleware = (err, req, res, next) => {
         return res.status(statusCode).json({
             success: false,
             message: err.message,
-            stack: err.stack
+            errors: err.errors || null,
+            stack: err.stack,
         });
     }
 
     return res.status(statusCode).json({
         success: false,
         error: err.message || "Internal Server Error",
+        errors: err.errors || null,
     });
 };
 

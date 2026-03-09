@@ -15,7 +15,7 @@ const registerUser = async ({ name, email, password }) => {
 
 // Login user
 const loginUser = async ({ email, password }) => {
-    if (!email || !password) throw new AppError('Please provide email and password', 400);
+    // if (!email || !password) throw new AppError('Please provide email and password', 400);
 
     const user = await User.findOne({ email }).select('+password');
     if (!user) throw new AppError('Invalid credentials', 401);
