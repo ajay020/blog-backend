@@ -39,6 +39,9 @@ exports.toggleBookmark = async (articleId, userId) => {
 // Get bookmarks
 exports.getBookmarks = async (userId, page = 1, limit = 10) => {
 
+    page = parseInt(page);
+    limit = parseInt(limit);
+
     const bookmarks = await Bookmark.find({ user: userId })
         .populate({
             path: "article",
@@ -51,17 +54,17 @@ exports.getBookmarks = async (userId, page = 1, limit = 10) => {
         .limit(limit * 1)
         .skip((page - 1) * limit);
 
-    const count = await Bookmark.countDocuments({ user: userId });
+    const articles = bookmarks
+        .filter(b => b.article)
+        .map(b => b.article.toObject());
 
-    const validBookmarks = bookmarks.filter(b => b.article !== null);
-
-    const articles = validBookmarks.map(b => b.article.toObject());
+    const total = await Bookmark.countDocuments({ user: userId });
 
     return {
         articles,
-        totalPages: Math.ceil(count / limit),
-        currentPage: parseInt(page),
-        total: count,
+        totalPages: Math.ceil(total / limit),
+        currentPage: page,
+        total,
     };
 };
 

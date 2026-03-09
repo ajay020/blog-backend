@@ -110,6 +110,8 @@ const deleteArticle = async (article, userId) => {
             }
         }
     }
+ 
+    await Bookmark.deleteMany({ article: article._id });
 
     await article.deleteOne();
 };
